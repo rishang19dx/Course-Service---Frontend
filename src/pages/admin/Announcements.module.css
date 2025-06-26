@@ -1,0 +1,29 @@
+.announcementsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.announcementCard {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  background: #fff;
+  padding: 20px;
+  transition: box-shadow 0.2s;
+}
+
+.announcementCard:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.announcementTitle {
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.announcementMeta {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+} 
