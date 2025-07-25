@@ -1,0 +1,151 @@
+.dashboard-container {
+  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.dashboard-header {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 15px 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.institute-name h1 {
+  font-size: 20px;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.institute-name p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background: #c0392b;
+}
+
+.dashboard-main {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.dashboard-content h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 15px;
+  }
+  
+  .user-section {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .dashboard-content {
+    padding: 20px 15px;
+  }
+}
+
+/* ------------- ACTION CARDS -------------*/
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  margin-top: 25px;
+}
+
+.action-card {
+  background: #ffffff;
+  border: 1px solid #e1e5ec;
+  border-radius: 10px;
+  padding: 28px 22px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.action-card .card-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.action-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.action-card p {
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.action-card:hover {
+  border-color: #3498db;
+  box-shadow: 0 8px 26px rgba(52, 152, 219, 0.18);
+  transform: translateY(-4px);
+}

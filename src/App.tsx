@@ -1,61 +1,64 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import AdminDashboard from './pages/AdminDashboard';
-import StudentDashboard from './pages/StudentDashboard';
-import FacultyDashboard from './pages/FacultyDashboard';
-import NotFound from './pages/NotFound';
-import theme from './theme';
-import LoginPage from './pages/Login';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import CreateStudent from './components/CreateStudent';
+import StudentSearch from './components/StudentSearch';        // NEW
+import UpdateStudent from './components/UpdateStudent';        // NEW
 import ProtectedRoute from './components/ProtectedRoute';
-import useAuthStore from './store/authStore';
+import { isAuthenticated } from './utils/api';
+import './App.css';
 
-function App() {
-  const { isAuthenticated, userRole } = useAuthStore();
-
+const App: React.FC = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
+    <Router>
+      <div className="App">
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          
           <Route 
-            path="/admin/*" 
+            path="/login" 
+            element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />} 
+          />
+          <Route 
+            path="/dashboard" 
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <AdminDashboard />
+              <ProtectedRoute>
+                <Dashboard />
               </ProtectedRoute>
             } 
           />
           <Route 
-            path="/faculty" 
+            path="/create-student" 
             element={
-              <ProtectedRoute allowedRoles={['faculty']}>
-                <FacultyDashboard />
+              <ProtectedRoute>
+                <CreateStudent />
+              </ProtectedRoute>
+            } 
+          />
+          {/* NEW ROUTES */}
+          <Route 
+            path="/student-search" 
+            element={
+              <ProtectedRoute>
+                <StudentSearch />
               </ProtectedRoute>
             } 
           />
           <Route 
-            path="/student" 
+            path="/update-student/:studentId" 
             element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <StudentDashboard />
+              <ProtectedRoute>
+                <UpdateStudent />
               </ProtectedRoute>
             } 
           />
-
           <Route 
             path="/" 
-            element={
-              isAuthenticated ? <Navigate to={`/${userRole}`} /> : <Navigate to="/login" />
-            } 
+            element={<Navigate to="/dashboard" replace />} 
           />
-          
-          <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
-    </ThemeProvider>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
