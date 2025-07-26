@@ -37,6 +37,8 @@
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   margin-bottom: 30px;
   position: relative;
+  /* Add proper spacing for back button */
+  padding-top: 60px;
 }
 
 .update-student-header h2 {
@@ -57,12 +59,18 @@
   font-size: 16px;
   cursor: pointer;
   color: #3498db;
-  padding: 0;
-  margin-bottom: 15px;
+  padding: 8px 12px;
+  /* Position absolutely to avoid overlap */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .back-btn:hover {
   text-decoration: underline;
+  background: rgba(52, 152, 219, 0.1);
 }
 
 .student-update-form {
@@ -99,6 +107,7 @@
   border-radius: 8px;
   font-size: 15px;
   transition: border-color 0.25s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -192,6 +201,17 @@
     padding: 15px;
   }
   
+  .update-student-header {
+    /* Reduce padding on mobile */
+    padding: 50px 20px 30px 20px;
+  }
+  
+  .back-btn {
+    top: 15px;
+    left: 15px;
+    font-size: 14px;
+  }
+  
   .form-grid {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -207,5 +227,25 @@
   
   .form-actions button {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .update-student-header {
+    padding: 45px 15px 25px 15px;
+  }
+  
+  .back-btn {
+    top: 12px;
+    left: 12px;
+    padding: 6px 10px;
+  }
+  
+  .update-student-header h2 {
+    font-size: 20px;
+  }
+  
+  .update-student-header p {
+    font-size: 14px;
   }
 }

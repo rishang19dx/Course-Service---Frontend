@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import CreateStudent from './components/CreateStudent';
-import StudentSearch from './components/StudentSearch';        // NEW
-import UpdateStudent from './components/UpdateStudent';        // NEW
+import StudentSearch from './components/StudentSearch';
+import UpdateStudent from './components/UpdateStudent';
+import CreateAnnouncement from './components/CreateAnnouncement'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import { isAuthenticated } from './utils/api';
 import './App.css';
@@ -34,7 +35,6 @@ const App: React.FC = () => {
               </ProtectedRoute>
             } 
           />
-          {/* NEW ROUTES */}
           <Route 
             path="/student-search" 
             element={
@@ -48,6 +48,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <UpdateStudent />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/create-announcement" 
+            element={
+              <ProtectedRoute>
+                <CreateAnnouncement />
               </ProtectedRoute>
             } 
           />

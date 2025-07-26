@@ -33,7 +33,6 @@ const Dashboard: React.FC = () => {
           <h2>Quick Actions</h2>
 
           <div className="dashboard-actions">
-            {/* Create Student Card */}
             <div
               className="action-card"
               onClick={() => navigate('/create-student')}
@@ -42,8 +41,6 @@ const Dashboard: React.FC = () => {
               <h3>Create Student</h3>
               <p>Add a new student record with default credentials.</p>
             </div>
-
-            {/* NEW: Update Student Card */}
             <div
               className="action-card"
               onClick={() => navigate('/student-search')}
@@ -51,6 +48,14 @@ const Dashboard: React.FC = () => {
               <span style={{fontSize: 48}}>✏️</span>
               <h3>Update Student</h3>
               <p>Search and modify existing student information and credentials.</p>
+            </div>
+            <div
+              className="action-card"
+              onClick={() => navigate('/create-announcement')}
+            >
+              <span style={{fontSize: 48}}>📢</span>
+              <h3>Post Announcement</h3>
+              <p>Share important updates and notifications with students and faculty.</p>
             </div>
           </div>
         </div>

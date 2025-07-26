@@ -264,6 +264,67 @@ export const updateStudent = (
 
 
 
+/* ------------------------------------------------------------------
+ *  ANNOUNCEMENT HELPERS
+ * ------------------------------------------------------------------*/
+
+export interface CreateAnnouncementRequest {
+  announcement_text: string;
+  admin_id: string;
+}
+
+export interface CreateAnnouncementResponse {
+  message: string;
+  announcement: {
+    announcement_id: string;
+    announcement: string;
+    admin_id: string;
+  };
+}
+
+/**
+ * Post a new announcement
+ */
+export const createAnnouncement = async (
+  announcementText: string
+): Promise<CreateAnnouncementResponse> => {
+  const adminId = getSessionToken(); // Using uid as admin_id
+  
+  if (!adminId) {
+    throw new Error('Admin authentication required');
+  }
+// we will put up a mailing service up at this port 
+  const response = await fetch('http://localhost:6000/announce', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      announcement_text: announcementText,
+      admin_id: adminId,
+    } as CreateAnnouncementRequest),
+  });
+
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    const textResponse = await response.text();
+    throw new Error(`Server returned non-JSON response: ${textResponse.substring(0, 100)}...`);
+  }
+
+  const data: CreateAnnouncementResponse = await response.json();
+
+  if (!response.ok) {
+    const errorData = data as any;
+    throw new Error(errorData.message || 'Failed to post announcement');
+  }
+
+  return data;
+};
+
+
+
+
+
 
 // Authenticated API requests helper
 export const authenticatedRequest = <T = any>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> => {
