@@ -57,6 +57,21 @@ const Dashboard: React.FC = () => {
               <h3>Post Announcement</h3>
               <p>Share important updates and notifications with students and faculty.</p>
             </div>
+            <div className="action-card" onClick={() => navigate('/create-course')}>
+              <span style={{fontSize: 48}}>➕</span>
+              <h3>Create Course</h3>
+              <p>Add a new course to the database.</p>
+            </div>
+            <div className="action-card" onClick={() => navigate('/update-course')}>
+              <span style={{fontSize: 48}}>📝</span>
+              <h3>Update Course</h3>
+              <p>Edit or update details of an existing course.</p>
+            </div>
+            <div className="action-card" onClick={() => navigate('/edit-course-helpers')}>
+              <span style={{ fontSize: 44 }}>🛠️</span>
+              <h3>Edit Course Helpers</h3>
+              <p>Edit which branches/programs are allowed for a course and how.</p>
+            </div>
           </div>
         </div>
       </main>

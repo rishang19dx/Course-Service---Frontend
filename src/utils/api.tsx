@@ -1,5 +1,6 @@
 const API_BASE_URL: string = 'http://localhost:3000';
-
+const COURSE_API_BASE = "http://localhost:4000";
+const COURSE_HELPER_API_BASE = "http://localhost:4000/spec";
 interface LoginRequest {
   uid: string;
 }
@@ -320,12 +321,137 @@ export const createAnnouncement = async (
 
   return data;
 };
+export interface CourseHelper {
+  uid: string;
+  course_id: string;    // Internal DB id (UUID or similar)
+  branch: string;
+  program: string;
+  course_type: string;  // Example values: IC, DC, DE, FE, HSS
+  semester: string;     // Example values: "even", "odd"
+  year: string;
+  slot?: string;
+}
 
+// Response for fetching helpers
+export interface GetHelpersResponse {
+  helpers: CourseHelper[];
+}
 
+// Inputs for creating a helper — **Note:** Send `course_code`, not `course_id`
+export interface AddHelperInput {
+  course_code: string;  // Human-readable code, e.g. "IC-181"
+  branch: string;
+  program: string;
+  course_type: string;
+  semester: string;
+  year: string;
+  slot?: string;
+}
 
+// Inputs for updating helper — can specify any subset, with uid required
+export interface UpdateHelperInput {
+  uid: string;
+  course_code?: string; // Optional, to update course_id indirectly
+  branch?: string;
+  program?: string;
+  course_type?: string;
+  semester?: string;
+  year?: string;
+  slot?: string;
+}
 
+// For deletion — only needs the uid
+export interface DeleteHelperInput {
+  uid: string;
+}
 
+// Append `uid` to any request body for admin authentication
+function withUid<T extends object>(data: T): T & { uid: string } {
+  const uid = getSessionToken();
+  if (!uid) throw new Error('Not authenticated as admin.');
+  return { ...data, uid };
+}
+/**
+ * Fetch helpers for a given course via POST.
+ * Sends `uid` in body, `course_id` in query parameter.
+ */
+export async function fetchHelpers(
+  course_id: string
+): Promise<GetHelpersResponse> {
+  const uid = getSessionToken();
+  if (!uid) throw new Error('Not authenticated as admin.');
 
+  const res = await fetch(
+    `${COURSE_HELPER_API_BASE}/get?course_id=${encodeURIComponent(course_id)}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid }),
+    }
+  );
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.message || 'Failed to fetch helpers');
+  return data;
+}
+
+/**
+ * Add a new course helper.
+ * backend expects `course_code` to resolve `course_id`.
+ */
+export async function addHelper(
+  input: AddHelperInput
+): Promise<{ message: string; helper: CourseHelper }> {
+  const res = await fetch(`${COURSE_HELPER_API_BASE}/add`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid(input)),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to add helper');
+  return data;
+}
+
+/**
+ * Update an existing helper, identified by uid.
+ * Must not send course_id; backend uses course_code instead if updating course.
+ */
+export async function updateHelper(
+  input: UpdateHelperInput
+): Promise<{ message: string; helper: CourseHelper }> {
+  const { uid, course_code, ...rest } = input;
+
+  // Compose with uid and course_code if provided
+  const payload = withUid({ uid, ...(course_code ? { course_code } : {}), ...rest });
+
+  const res = await fetch(`${COURSE_HELPER_API_BASE}/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to update helper');
+  return data;
+}
+
+/**
+ * Delete a helper by uid.
+ */
+export async function deleteHelper(
+  uid: string
+): Promise<{ message: string; uid: string }> {
+  const res = await fetch(`${COURSE_HELPER_API_BASE}/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ uid })),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to delete helper');
+  return data;
+}
 // Authenticated API requests helper
 export const authenticatedRequest = <T = any>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> => {
   return apiRequest<T>(endpoint, options);

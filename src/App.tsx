@@ -8,6 +8,9 @@ import UpdateStudent from './components/UpdateStudent';
 import CreateAnnouncement from './components/CreateAnnouncement'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import { isAuthenticated } from './utils/api';
+import CreateCourse from './components/CreateCourse';
+import UpdateCourse from './components/UpdateCourse';
+import EditCourseHelpers from './components/EditCourseHelper';
 import './App.css';
 
 const App: React.FC = () => {
@@ -63,6 +66,13 @@ const App: React.FC = () => {
             path="/" 
             element={<Navigate to="/dashboard" replace />} 
           />
+        <Route path="/create-course" element={<ProtectedRoute><CreateCourse /></ProtectedRoute>} />
+        <Route path="/update-course" element={<ProtectedRoute><UpdateCourse /></ProtectedRoute>} />
+        <Route path="/edit-course-helpers" element={
+        <ProtectedRoute>
+          <EditCourseHelpers />
+        </ProtectedRoute>
+      } />
         </Routes>
       </div>
     </Router>
