@@ -8,27 +8,42 @@
   padding-top: 40px;
 }
 
-header {
+.create-course-container header {
+  /* Only apply header styles within create-course-container */
   margin-bottom: 24px;
   text-align: center;
   position: relative;
+  width: 100%;
+  max-width: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Prevents global header styling collision */
 }
 
-.back-btn {
+.create-course-container .back-btn {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   background: transparent;
   border: none;
   color: #3498db;
   font-size: 16px;
   cursor: pointer;
-  padding: 8px 14px;
+  padding: 7px 14px;
   border-radius: 5px;
+  z-index: 2;
 }
-.back-btn:hover {
+.create-course-container .back-btn:hover {
   background: #e1ecf7;
   text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .create-course-container header {
+    max-width: 98vw;
+  }
 }
 
 .create-course-container h2 {

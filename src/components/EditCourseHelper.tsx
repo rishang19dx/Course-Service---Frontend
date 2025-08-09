@@ -4,11 +4,21 @@ import {
   addHelper,
   updateHelper,
   deleteHelper,
-  CourseHelper,
 } from "../utils/api";
 import "./EditCourseHelpers.css";
 
-const EMPTY: Omit<CourseHelper, "uid"> = {
+export interface UICourseHelper {
+  course_helper_uid: string; // unique id for the helper row
+  course_id: string;
+  branch: string;
+  program: string;
+  course_type: string;
+  semester: string;
+  year: string;
+  slot?: string;
+}
+
+const EMPTY: Omit<UICourseHelper, "course_helper_uid"> = {
   course_id: "",
   branch: "",
   program: "",
@@ -23,98 +33,120 @@ const SEMESTERS = ["even", "odd"];
 
 const EditCourseHelpers: React.FC = () => {
   const [courseId, setCourseId] = useState<string>("");
-  const [helpers, setHelpers] = useState<CourseHelper[]>([]);
+  const [helpers, setHelpers] = useState<UICourseHelper[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [msg, setMsg] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  // For adding a new helper
-  const [newHelper, setNewHelper] = useState<Omit<CourseHelper, "uid">>(
-    EMPTY
-  );
+  const [newHelper, setNewHelper] = useState<Omit<UICourseHelper, "course_helper_uid">>(EMPTY);
 
-  // For tracking which helpers are being edited
   const [editHelper, setEditHelper] = useState<Record<
     string,
-    Partial<Omit<CourseHelper, "uid">>
+    Partial<Omit<UICourseHelper, "course_helper_uid">>
   >>({});
 
-  // Fetch helpers when courseId changes
   useEffect(() => {
     if (!courseId.trim()) return;
-
     setLoading(true);
     setError("");
     setMsg("");
     fetchHelpers(courseId.trim())
-      .then((res) => setHelpers(res.helpers))
+      .then((res) => {
+        // Map backend "uid" field to course_helper_uid for UI
+        const mapped: UICourseHelper[] = res.helpers.map((h: any) => ({
+          course_helper_uid: h.uid,
+          course_id: h.course_id,
+          branch: h.branch,
+          program: h.program,
+          course_type: h.course_type,
+          semester: h.semester,
+          year: h.year,
+          slot: h.slot,
+        }));
+        setHelpers(mapped);
+      })
       .catch((e) => setError(e.message || "Failed to fetch helpers"))
       .finally(() => setLoading(false));
   }, [courseId]);
 
-  // Handle new helper addition
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setError("");
     setMsg("");
-
     const { branch, program, course_type, semester, year } = newHelper;
     if (!branch || !program || !course_type || !semester || !year) {
       setError("Please fill all required fields.");
       return;
     }
-
     try {
-      await addHelper({ ...newHelper, course_id: courseId });
+      await addHelper({ ...newHelper, course_code: courseId });
       setMsg("Helper added successfully.");
       setNewHelper({ ...EMPTY, course_id: courseId });
       const refreshed = await fetchHelpers(courseId);
-      setHelpers(refreshed.helpers);
+      const mapped: UICourseHelper[] = refreshed.helpers.map((h: any) => ({
+        course_helper_uid: h.uid,
+        course_id: h.course_id,
+        branch: h.branch,
+        program: h.program,
+        course_type: h.course_type,
+        semester: h.semester,
+        year: h.year,
+        slot: h.slot,
+      }));
+      setHelpers(mapped);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to add helper");
     }
   };
 
-  // Handle helper update
-  const handleUpdate = async (uid: string) => {
+  const handleUpdate = async (courseHelperUid: string) => {
     setError("");
     setMsg("");
-
-    const changes = editHelper[uid];
+    const changes = editHelper[courseHelperUid];
     if (!changes || Object.keys(changes).length === 0) {
       setError("No changes to save.");
       return;
     }
-
     try {
-      // Defensive: ensure course_id is never sent to update
-      if ("course_id" in changes) {
-        delete changes.course_id;
-      }
-
-      await updateHelper({ uid, ...changes });
+      await updateHelper({ course_helper_uid: courseHelperUid, ...changes });
       setMsg("Helper updated successfully.");
-      setEditHelper((prev) => ({ ...prev, [uid]: {} }));
+      setEditHelper((prev) => ({ ...prev, [courseHelperUid]: {} }));
       const refreshed = await fetchHelpers(courseId);
-      setHelpers(refreshed.helpers);
+      const mapped: UICourseHelper[] = refreshed.helpers.map((h: any) => ({
+        course_helper_uid: h.uid,
+        course_id: h.course_id,
+        branch: h.branch,
+        program: h.program,
+        course_type: h.course_type,
+        semester: h.semester,
+        year: h.year,
+        slot: h.slot,
+      }));
+      setHelpers(mapped);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to update helper");
     }
   };
 
-  // Handle helper deletion
-  const handleDelete = async (uid: string) => {
+  const handleDelete = async (courseHelperUid: string) => {
     setError("");
     setMsg("");
-
-    if (!window.confirm("Are you sure you want to delete this helper?")) return;
-
+    if (!window.confirm("Delete this helper?")) return;
     try {
-      await deleteHelper({ uid });
+      await deleteHelper(courseHelperUid);
       setMsg("Helper deleted successfully.");
       const refreshed = await fetchHelpers(courseId);
-      setHelpers(refreshed.helpers);
+      const mapped: UICourseHelper[] = refreshed.helpers.map((h: any) => ({
+        course_helper_uid: h.uid,
+        course_id: h.course_id,
+        branch: h.branch,
+        program: h.program,
+        course_type: h.course_type,
+        semester: h.semester,
+        year: h.year,
+        slot: h.slot,
+      }));
+      setHelpers(mapped);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to delete helper");
     }
@@ -131,13 +163,7 @@ const EditCourseHelpers: React.FC = () => {
         </p>
       </header>
 
-      <form
-        className="course-id-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          // Fetch already triggered by courseId change
-        }}
-      >
+      <form className="course-id-form" onSubmit={(e) => e.preventDefault()}>
         <input
           type="text"
           placeholder="Course ID"
@@ -175,23 +201,21 @@ const EditCourseHelpers: React.FC = () => {
               <tbody>
                 {helpers.map((helper) => {
                   const isEditing =
-                    editHelper[helper.uid] !== undefined &&
-                    Object.keys(editHelper[helper.uid]).length > 0;
+                    editHelper[helper.course_helper_uid] &&
+                    Object.keys(editHelper[helper.course_helper_uid]).length > 0;
 
                   return (
-                    <tr key={helper.uid}>
+                    <tr key={helper.course_helper_uid}>
                       {isEditing ? (
                         <>
                           <td>
                             <input
-                              value={
-                                editHelper[helper.uid].branch ?? helper.branch
-                              }
+                              value={editHelper[helper.course_helper_uid]?.branch ?? helper.branch}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {
-                                    ...prev[helper.uid],
+                                  [helper.course_helper_uid]: {
+                                    ...prev[helper.course_helper_uid],
                                     branch: e.target.value,
                                   },
                                 }))
@@ -200,14 +224,12 @@ const EditCourseHelpers: React.FC = () => {
                           </td>
                           <td>
                             <input
-                              value={
-                                editHelper[helper.uid].program ?? helper.program
-                              }
+                              value={editHelper[helper.course_helper_uid]?.program ?? helper.program}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {
-                                    ...prev[helper.uid],
+                                  [helper.course_helper_uid]: {
+                                    ...prev[helper.course_helper_uid],
                                     program: e.target.value,
                                   },
                                 }))
@@ -216,15 +238,12 @@ const EditCourseHelpers: React.FC = () => {
                           </td>
                           <td>
                             <select
-                              value={
-                                editHelper[helper.uid].course_type ??
-                                helper.course_type
-                              }
+                              value={editHelper[helper.course_helper_uid]?.course_type ?? helper.course_type}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {
-                                    ...prev[helper.uid],
+                                  [helper.course_helper_uid]: {
+                                    ...prev[helper.course_helper_uid],
                                     course_type: e.target.value,
                                   },
                                 }))
@@ -242,15 +261,12 @@ const EditCourseHelpers: React.FC = () => {
                           </td>
                           <td>
                             <select
-                              value={
-                                editHelper[helper.uid].semester ??
-                                helper.semester
-                              }
+                              value={editHelper[helper.course_helper_uid]?.semester ?? helper.semester}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {
-                                    ...prev[helper.uid],
+                                  [helper.course_helper_uid]: {
+                                    ...prev[helper.course_helper_uid],
                                     semester: e.target.value,
                                   },
                                 }))
@@ -268,14 +284,12 @@ const EditCourseHelpers: React.FC = () => {
                           </td>
                           <td>
                             <input
-                              value={
-                                editHelper[helper.uid].year ?? helper.year
-                              }
+                              value={editHelper[helper.course_helper_uid]?.year ?? helper.year}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {
-                                    ...prev[helper.uid],
+                                  [helper.course_helper_uid]: {
+                                    ...prev[helper.course_helper_uid],
                                     year: e.target.value,
                                   },
                                 }))
@@ -284,14 +298,12 @@ const EditCourseHelpers: React.FC = () => {
                           </td>
                           <td>
                             <input
-                              value={
-                                editHelper[helper.uid].slot ?? helper.slot
-                              }
+                              value={editHelper[helper.course_helper_uid]?.slot ?? helper.slot}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {
-                                    ...prev[helper.uid],
+                                  [helper.course_helper_uid]: {
+                                    ...prev[helper.course_helper_uid],
                                     slot: e.target.value,
                                   },
                                 }))
@@ -300,7 +312,7 @@ const EditCourseHelpers: React.FC = () => {
                           </td>
                           <td>
                             <button
-                              onClick={() => handleUpdate(helper.uid)}
+                              onClick={() => handleUpdate(helper.course_helper_uid)}
                               disabled={loading}
                             >
                               Save
@@ -309,7 +321,7 @@ const EditCourseHelpers: React.FC = () => {
                               onClick={() =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: {},
+                                  [helper.course_helper_uid]: {},
                                 }))
                               }
                               disabled={loading}
@@ -331,7 +343,7 @@ const EditCourseHelpers: React.FC = () => {
                               onClick={() =>
                                 setEditHelper((prev) => ({
                                   ...prev,
-                                  [helper.uid]: { ...helper },
+                                  [helper.course_helper_uid]: { ...helper },
                                 }))
                               }
                               disabled={loading}
@@ -339,7 +351,7 @@ const EditCourseHelpers: React.FC = () => {
                               Edit
                             </button>
                             <button
-                              onClick={() => handleDelete(helper.uid)}
+                              onClick={() => handleDelete(helper.course_helper_uid)}
                               disabled={loading}
                             >
                               Delete
@@ -351,16 +363,12 @@ const EditCourseHelpers: React.FC = () => {
                   );
                 })}
 
-                {/* New helper entry row */}
                 <tr>
                   <td>
                     <input
                       value={newHelper.branch}
                       onChange={(e) =>
-                        setNewHelper((prev) => ({
-                          ...prev,
-                          branch: e.target.value,
-                        }))
+                        setNewHelper((prev) => ({ ...prev, branch: e.target.value }))
                       }
                       placeholder="Branch"
                     />
@@ -369,10 +377,7 @@ const EditCourseHelpers: React.FC = () => {
                     <input
                       value={newHelper.program}
                       onChange={(e) =>
-                        setNewHelper((prev) => ({
-                          ...prev,
-                          program: e.target.value,
-                        }))
+                        setNewHelper((prev) => ({ ...prev, program: e.target.value }))
                       }
                       placeholder="Program"
                     />
@@ -381,10 +386,7 @@ const EditCourseHelpers: React.FC = () => {
                     <select
                       value={newHelper.course_type}
                       onChange={(e) =>
-                        setNewHelper((prev) => ({
-                          ...prev,
-                          course_type: e.target.value,
-                        }))
+                        setNewHelper((prev) => ({ ...prev, course_type: e.target.value }))
                       }
                     >
                       <option value="">Choose Type</option>
@@ -399,10 +401,7 @@ const EditCourseHelpers: React.FC = () => {
                     <select
                       value={newHelper.semester}
                       onChange={(e) =>
-                        setNewHelper((prev) => ({
-                          ...prev,
-                          semester: e.target.value,
-                        }))
+                        setNewHelper((prev) => ({ ...prev, semester: e.target.value }))
                       }
                     >
                       <option value="">Choose Semester</option>
