@@ -11,6 +11,8 @@ import { isAuthenticated } from './utils/api';
 import CreateCourse from './components/CreateCourse';
 import UpdateCourse from './components/UpdateCourse';
 import EditCourseHelpers from './components/EditCourseHelper';
+import UpdateCourseList from './components/UpdateCourseList';
+import EditCourse from './components/EditCourse';
 import './App.css';
 
 const App: React.FC = () => {
@@ -73,6 +75,9 @@ const App: React.FC = () => {
           <EditCourseHelpers />
         </ProtectedRoute>
       } />
+        <Route path="/update-course" element={<ProtectedRoute><UpdateCourse /></ProtectedRoute>} />
+        <Route path="/update-course-list/:courseCode" element={<ProtectedRoute><UpdateCourseList /></ProtectedRoute>} />
+        <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

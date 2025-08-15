@@ -169,6 +169,68 @@ export const updateCourse = async (payload: UpdateCourseInput): Promise<CourseRe
   if (!res.ok) throw new Error(data.message || 'Unable to update course');
   return data;
 };
+
+export interface CourseAdmin {
+  course_id: string;
+  course_code: string;
+  course_name: string;
+  school: string;
+  lecture: number;
+  tutorial: number;
+  practical: number;
+  credits: number;
+  slot: string;
+}
+
+{/* function withUid<T extends object>(data: T): T & { uid: string } {
+  const uid = getSessionToken();
+  if (!uid) throw new Error('Not authenticated as admin.');
+  return { ...data, uid };
+} */}
+
+export async function getCoursesByCode(course_code: string): Promise<{ courses: CourseAdmin[] }> {
+  const res = await fetch(`${COURSE_API_BASE}/by-code`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ course_code })),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to fetch courses by code');
+  return data;
+}
+
+export async function getCourseById(course_id: string): Promise<{ course: CourseAdmin }> {
+  const res = await fetch(`${COURSE_API_BASE}/get`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ course_id })),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to fetch course by ID');
+  return data;
+}
+
+export async function updateCourseAdmin(payload: CourseAdmin): Promise<{ message: string; course: CourseAdmin }> {
+  const res = await fetch(`${COURSE_API_BASE}/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid(payload)),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to update course');
+  return data;
+}
+
+export async function deleteCourseAdmin(course_id: string): Promise<{ message: string }> {
+  const res = await fetch(`${COURSE_API_BASE}/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ course_id })),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to delete course');
+  return data;
+}
 // ==============================
 // COURSE HELPER OPERATIONS
 // ==============================

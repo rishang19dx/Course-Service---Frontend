@@ -15,7 +15,7 @@ export interface UICourseHelper {
   course_type: string;
   semester: string;
   year: string;
-  slot?: string;
+  // slot?: string;
 }
 
 const EMPTY: Omit<UICourseHelper, "course_helper_uid"> = {
@@ -25,7 +25,7 @@ const EMPTY: Omit<UICourseHelper, "course_helper_uid"> = {
   course_type: "",
   semester: "",
   year: "",
-  slot: "",
+  // slot: "",
 };
 
 const TYPE_VALUES = ["IC", "DC", "DE", "FE", "HSS"];
@@ -61,7 +61,7 @@ const EditCourseHelpers: React.FC = () => {
           course_type: h.course_type,
           semester: h.semester,
           year: h.year,
-          slot: h.slot,
+          // slot: h.slot,
         }));
         setHelpers(mapped);
       })
@@ -91,7 +91,7 @@ const EditCourseHelpers: React.FC = () => {
         course_type: h.course_type,
         semester: h.semester,
         year: h.year,
-        slot: h.slot,
+        // slot: h.slot,
       }));
       setHelpers(mapped);
     } catch (e) {
@@ -120,7 +120,7 @@ const EditCourseHelpers: React.FC = () => {
         course_type: h.course_type,
         semester: h.semester,
         year: h.year,
-        slot: h.slot,
+        // slot: h.slot,
       }));
       setHelpers(mapped);
     } catch (e) {
@@ -144,7 +144,7 @@ const EditCourseHelpers: React.FC = () => {
         course_type: h.course_type,
         semester: h.semester,
         year: h.year,
-        slot: h.slot,
+        // slot: h.slot,
       }));
       setHelpers(mapped);
     } catch (e) {
@@ -193,7 +193,7 @@ const EditCourseHelpers: React.FC = () => {
                   <th>Type</th>
                   <th>Semester</th>
                   <th>Year</th>
-                  <th>Slot</th>
+                  {/* <th>Slot</th> */}
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -297,7 +297,7 @@ const EditCourseHelpers: React.FC = () => {
                             />
                           </td>
                           <td>
-                            <input
+                            {/* <input
                               value={editHelper[helper.course_helper_uid]?.slot ?? helper.slot}
                               onChange={(e) =>
                                 setEditHelper((prev) => ({
@@ -308,7 +308,7 @@ const EditCourseHelpers: React.FC = () => {
                                   },
                                 }))
                               }
-                            />
+                            /> */}
                           </td>
                           <td>
                             <button
@@ -337,7 +337,7 @@ const EditCourseHelpers: React.FC = () => {
                           <td>{helper.course_type}</td>
                           <td>{helper.semester}</td>
                           <td>{helper.year}</td>
-                          <td>{helper.slot}</td>
+                          {/* <td>{helper.slot}</td> */}
                           <td>
                             <button
                               onClick={() =>
@@ -422,13 +422,13 @@ const EditCourseHelpers: React.FC = () => {
                     />
                   </td>
                   <td>
-                    <input
+                    {/* <input
                       value={newHelper.slot}
                       onChange={(e) =>
                         setNewHelper((prev) => ({ ...prev, slot: e.target.value }))
                       }
                       placeholder="Slot"
-                    />
+                    /> */}
                   </td>
                   <td>
                     <button onClick={handleAdd} disabled={loading}>
