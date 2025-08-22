@@ -37,12 +37,9 @@ const apiRequest = async <T = any>(endpoint: string, options: ApiRequestOptions 
   return data;
 };
 
-export const authenticatedRequest = <T = any>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> =>
+export const authenticatedRequest = <T=any>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> =>
   apiRequest<T>(endpoint, options);
 
-// ==============================
-// AUTH HELPERS
-// ==============================
 
 export const login = async (uid: string): Promise<LoginResponse> => {
   const res = await fetch(`${API_BASE_URL}/login_admin`, {
@@ -60,9 +57,7 @@ export const login = async (uid: string): Promise<LoginResponse> => {
   return data;
 };
 
-// ==============================
-// STUDENT HELPERS
-// ==============================
+
 
 export interface CreateStudentRequest {
   student_id: string; name: string; branch: string; batch: string; program: string;
@@ -93,9 +88,6 @@ export const getStudentDetails = async (studentId: string): Promise<StudentDetai
 export const updateStudent = (payload: UpdateStudentRequest): Promise<UpdateStudentResponse> =>
   authenticatedRequest<UpdateStudentResponse>('/update', { method: 'POST', body: JSON.stringify(payload) });
 
-// ==============================
-// ANNOUNCEMENT HELPERS
-// ==============================
 
 export interface CreateAnnouncementResponse {
   message: string;
@@ -117,10 +109,26 @@ export const createAnnouncement = async (announcementText: string): Promise<Crea
   if (!res.ok) throw new Error(data.message || 'Failed to post announcement');
   return data;
 };
-
-// ==============================
-// COURSE HELPERS
-// ==============================
+export interface CreatePreFinalCourseInput {
+  course_code: string; course_name: string; school: string;
+  lecture: number; tutorial: number; practical: number; credits: number;
+}
+export const createPreFinalCourse = async (payload: CreatePreFinalCourseInput): Promise<CourseResponse> => {
+  const uid = getSessionToken();
+  if (!uid) throw new Error('Not authenticated as admin.');
+  const res = await fetch(`${COURSE_API_BASE}/pre_final/create`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...payload, uid }),
+  });
+  const contentType = res.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    const textResponse = await res.text();
+    throw new Error(`Server returned non-JSON response: ${textResponse.substring(0, 100)}...`);
+  }
+  const data: CourseResponse = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Unable to create course');
+  return data;
+};
 
 export interface CreateCourseInput {
   course_code: string; course_name: string; school: string;
@@ -269,11 +277,7 @@ export async function updateHelper(
 }
 export interface DeleteHelperInput { course_helper_uid: string;}
 
-function withUid<T extends object>(data: T): T & { uid: string } {
-  const uid = getSessionToken();
-  if (!uid) throw new Error('Not authenticated as admin.');
-  return { ...data, uid };
-}
+
 
 export async function fetchHelpers(course_id: string): Promise<GetHelpersResponse> {
   const uid = getSessionToken();
@@ -306,5 +310,86 @@ export async function deleteHelper(course_helper_uid: string): Promise<{ message
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Failed to delete helper');
+  return data;
+}
+
+
+// ==============================
+// FACULTY COURSE REQUESTS (prof_course_req)
+// ==============================
+export interface ProfessorInfo {
+  iid: string;
+  prof_name: string;
+  prof_email: string;
+  school: string;
+}
+
+export interface PreFinalCourseInfo {
+  course_id: string;
+  course_code: string;
+  course_name: string;
+  school: string;
+  lecture: number;
+  tutorial: number;
+  practical: number;
+  credits: number;
+  slot: string;
+  status: boolean | null;
+}
+
+export interface ProfCourseReq {
+  request_id: string;
+  iid: string;
+  pre_final_course_id: string;
+  slot: string;
+  chairperson_id: string;
+  accept_reject: boolean | null;
+  professor?: ProfessorInfo;
+  pre_final_course?: PreFinalCourseInfo;
+}
+
+export interface ProfCourseReqListResponse {
+  facultyRequests: ProfCourseReq[];
+}
+
+function withUid<T extends object>(data: T): T & { uid: string } {
+  const uid = getSessionToken();
+  if (!uid) throw new Error('Not authenticated as admin.');
+  return { ...data, uid };
+}
+
+// Fetch all faculty requests (POST-only)
+export async function fetchProfCourseRequests(): Promise<ProfCourseReqListResponse> {
+  const res = await fetch(`${COURSE_API_BASE}/prof_course_req`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({}))
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to fetch faculty course requests');
+  return data;
+}
+
+// Approve a request (POST-only)
+export async function approveProfCourseReq(request_id: string): Promise<{ message: string; request_id: string }> {
+  const res = await fetch(`${COURSE_API_BASE}/prof_course_req/approve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ request_id }))
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to approve request');
+  return data;
+}
+
+// Reject a request (POST-only)
+export async function rejectProfCourseReq(request_id: string): Promise<{ message: string; request_id: string }> {
+  const res = await fetch(`${COURSE_API_BASE}/prof_course_req/reject`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ request_id }))
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to reject request');
   return data;
 }

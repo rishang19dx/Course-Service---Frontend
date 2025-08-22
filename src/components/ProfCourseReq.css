@@ -1,0 +1,152 @@
+.prof-reqs-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+
+.prof-reqs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.prof-reqs-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #1f2937;
+}
+
+.refresh-btn {
+  background: #0ea5e9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-box {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 0.8rem;
+}
+
+.prof-reqs-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.prof-req-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #fafafa;
+}
+
+.prof-req-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 1.2fr;
+  gap: 0.8rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.prof-req-row:last-child {
+  margin-bottom: 0;
+}
+
+.col .label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.1rem;
+}
+
+.col .value {
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.col .value.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.col .sub {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.status-col .badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.badge.pending {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+.badge.approved {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+.badge.rejected {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.actions-col {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.tick-btn,
+.cross-btn {
+  width: 40px;
+  height: 36px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tick-btn {
+  background: #22c55e;
+}
+
+.tick-btn:disabled {
+  background: #a7f3d0;
+  color: #064e3b;
+  cursor: not-allowed;
+}
+
+.cross-btn {
+  background: #ef4444;
+}
+
+.cross-btn:disabled {
+  background: #fecaca;
+  color: #7f1d1d;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 840px) {
+  .prof-req-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}

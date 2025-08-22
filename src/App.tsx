@@ -8,12 +8,14 @@ import UpdateStudent from './components/UpdateStudent';
 import CreateAnnouncement from './components/CreateAnnouncement'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import { isAuthenticated } from './utils/api';
-import CreateCourse from './components/CreateCourse';
+import CreateCourse from './components/CreatePreFinalCourse';
 import UpdateCourse from './components/UpdateCourse';
 import EditCourseHelpers from './components/EditCourseHelper';
 import UpdateCourseList from './components/UpdateCourseList';
 import EditCourse from './components/EditCourse';
+import ProfCourseRequests from './components/ProfCourseReq';
 import './App.css';
+
 
 const App: React.FC = () => {
   return (
@@ -78,6 +80,16 @@ const App: React.FC = () => {
         <Route path="/update-course" element={<ProtectedRoute><UpdateCourse /></ProtectedRoute>} />
         <Route path="/update-course-list/:courseCode" element={<ProtectedRoute><UpdateCourseList /></ProtectedRoute>} />
         <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
+        <Route
+          path="/faculty-requests"
+          element={
+            <ProtectedRoute>
+              <ProfCourseRequests />
+            </ProtectedRoute>
+          }
+        />
+        
+        
         </Routes>
       </div>
     </Router>

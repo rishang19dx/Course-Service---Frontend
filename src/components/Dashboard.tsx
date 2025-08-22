@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { logout, getSessionToken } from '../utils/api';
+import { logout } from '../utils/api';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const handleLogout = () => logout();
-  const uid = getSessionToken();
+  // const uid = getSessionToken();
 
   return (
     <div className="dashboard-container">
@@ -48,17 +48,22 @@ const Dashboard: React.FC = () => {
             <div className="action-card" onClick={() => navigate('/create-course')}>
               <span className="icon">➕</span>
               <h3>Create Course</h3>
-              <p>Add a new course to the database.</p>
+              <p>Create a course that faculty will request from.</p>
             </div>
             <div className="action-card" onClick={() => navigate('/update-course')}>
               <span className="icon">📝</span>
               <h3>Update Course</h3>
-              <p>Edit or update details of an existing course.</p>
+              <p>Edit or update details of an existing (Finalized) course.</p>
             </div>
             <div className="action-card" onClick={() => navigate('/edit-course-helpers')}>
               <span className="icon">🛠️</span>
               <h3>Edit Course Helpers</h3>
-              <p>Edit which branches/programs are allowed for a course and how.</p>
+              <p>Edit which branches/programs are allowed for a (Finalized) course and how.</p>
+            </div>
+            <div className="action-card" onClick={() => navigate('/faculty-requests')}>
+              <span className="icon">🗂️</span>
+              <h3>Faculty Course Requests</h3>
+              <p>Review, approve, or reject Course-taking requests from faculty.</p>
             </div>
           </div>
         </div>
