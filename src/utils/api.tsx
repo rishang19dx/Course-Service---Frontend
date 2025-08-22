@@ -393,3 +393,83 @@ export async function rejectProfCourseReq(request_id: string): Promise<{ message
   if (!res.ok) throw new Error(data.message || 'Failed to reject request');
   return data;
 }
+// ==============================
+// PROFESSOR OPERATIONS
+// ==============================
+
+export interface Professor {
+  iid: string;
+  prof_name: string;
+  prof_email: string;
+  prof_passed: string;
+  school: string;
+}
+
+export interface CreateProfessorRequest {
+  prof_name: string;
+  prof_email: string;
+  prof_passed: string;
+  school: string;
+}
+
+export interface UpdateProfessorRequest {
+  iid: string;
+  prof_name?: string;
+  prof_email?: string;
+  prof_passed?: string;
+  school?: string;
+}
+
+// function withUid<T extends object>(data: T): T & { uid: string } {
+//   const uid = getSessionToken();
+//   if (!uid) throw new Error('Not authenticated as admin.');
+//   return { ...data, uid };
+// }
+
+// Create professor
+export async function createProfessor(payload: CreateProfessorRequest): Promise<{ message: string; professor: Professor }> {
+  const res = await fetch(`${COURSE_API_BASE}/professor/create`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid(payload)),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to create professor');
+  return data;
+}
+
+// Search professor by email
+export async function searchProfessorByEmail(prof_email: string): Promise<{ professor: Professor }> {
+  const res = await fetch(`${COURSE_API_BASE}/professor/search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ prof_email })),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to search professor');
+  return data;
+}
+
+// Get professor by ID
+export async function getProfessorById(iid: string): Promise<{ professor: Professor }> {
+  const res = await fetch(`${COURSE_API_BASE}/professor/get`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid({ iid })),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to fetch professor');
+  return data;
+}
+
+// Update professor
+export async function updateProfessor(payload: UpdateProfessorRequest): Promise<{ message: string; professor: Professor }> {
+  const res = await fetch(`${COURSE_API_BASE}/professor/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(withUid(payload)),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to update professor');
+  return data;
+}

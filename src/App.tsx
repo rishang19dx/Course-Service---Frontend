@@ -14,6 +14,9 @@ import EditCourseHelpers from './components/EditCourseHelper';
 import UpdateCourseList from './components/UpdateCourseList';
 import EditCourse from './components/EditCourse';
 import ProfCourseRequests from './components/ProfCourseReq';
+import CreateProfessor from './components/CreateProfessor';
+import ProfessorSearch from './components/ProfessorSearch';
+import UpdateProfessor from './components/UpdateProfessor';
 import './App.css';
 
 
@@ -88,8 +91,31 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        
-        
+        <Route 
+          path="/create-professor" 
+          element={
+            <ProtectedRoute>
+              <CreateProfessor />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/professor-search" 
+          element={
+            <ProtectedRoute>
+              <ProfessorSearch />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/update-professor/:professorId" 
+          element={
+            <ProtectedRoute>
+              <UpdateProfessor />
+            </ProtectedRoute>
+          } 
+        />      
+  
         </Routes>
       </div>
     </Router>

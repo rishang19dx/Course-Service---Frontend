@@ -60,6 +60,16 @@ const Dashboard: React.FC = () => {
               <h3>Edit Course Helpers</h3>
               <p>Edit which branches/programs are allowed for a (Finalized) course and how.</p>
             </div>
+            <div className="action-card" onClick={() => navigate('/create-professor')}>
+              <span className="icon">👨‍🏫</span>
+              <h3>Create Professor</h3>
+              <p>Add a new professor to the system.</p>
+            </div>
+            <div className="action-card" onClick={() => navigate('/professor-search')}>
+              <span className="icon">🔍</span>
+              <h3>Update Professor</h3>
+              <p>Search and modify existing professor information.</p>
+            </div>
             <div className="action-card" onClick={() => navigate('/faculty-requests')}>
               <span className="icon">🗂️</span>
               <h3>Faculty Course Requests</h3>
