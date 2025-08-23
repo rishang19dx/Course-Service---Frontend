@@ -75,6 +75,11 @@ const Dashboard: React.FC = () => {
               <h3>Faculty Course Requests</h3>
               <p>Review, approve, or reject Course-taking requests from faculty.</p>
             </div>
+            <div className="action-card" onClick={() => navigate('/system-state')}>
+              <span className="icon">⚙️</span>
+              <h3>System State</h3>
+              <p>Manage current system state for course registration phases.</p>
+            </div>
           </div>
         </div>
       </main>

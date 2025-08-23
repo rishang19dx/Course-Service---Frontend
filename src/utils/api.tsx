@@ -473,3 +473,52 @@ export async function updateProfessor(payload: UpdateProfessorRequest): Promise<
   if (!res.ok) throw new Error(data.message || 'Failed to update professor');
   return data;
 }
+
+
+// ==============================
+// SYSTEM STATE OPERATIONS
+// ==============================
+
+export enum StateType {
+  COURSE_FINALIZATION = 'COURSE_FINALIZATION',
+  PRE_REGISTRATION = 'PRE_REGISTRATION',
+  REGISTRATION = 'REGISTRATION'
+}
+
+export interface SystemState {
+  id: number;
+  sysState: StateType;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface SystemStateResponse {
+  id: number;
+  sysState: StateType;
+}
+
+// Get current system state
+export async function getSystemState(): Promise<SystemStateResponse> {
+  const res = await fetch(`${API_BASE_URL}/sys/state`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to fetch system state');
+  return data;
+}
+
+// Change system state (admin only)
+export async function changeSystemState(newstate: StateType): Promise<SystemStateResponse> {
+  const uid = getSessionToken();
+  if (!uid) throw new Error('Not authenticated as admin.');
+  
+  const res = await fetch(`${API_BASE_URL}/sys/change`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ uid, newstate }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to change system state');
+  return data;
+}

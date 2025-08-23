@@ -17,6 +17,7 @@ import ProfCourseRequests from './components/ProfCourseReq';
 import CreateProfessor from './components/CreateProfessor';
 import ProfessorSearch from './components/ProfessorSearch';
 import UpdateProfessor from './components/UpdateProfessor';
+import SystemState from './components/SystemState';
 import './App.css';
 
 
@@ -115,7 +116,14 @@ const App: React.FC = () => {
             </ProtectedRoute>
           } 
         />      
-  
+        <Route 
+        path="/system-state" 
+        element={
+          <ProtectedRoute>
+            <SystemState />
+          </ProtectedRoute>
+        } 
+      />
         </Routes>
       </div>
     </Router>
