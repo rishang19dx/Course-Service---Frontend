@@ -3,8 +3,8 @@
 // ==============================
 
 const API_BASE_URL: string = 'http://localhost:3000';
-const COURSE_API_BASE = "http://localhost:4000";
-const COURSE_HELPER_API_BASE = "http://localhost:4000/spec";
+const COURSE_API_BASE = "http://localhost:3000";
+const COURSE_HELPER_API_BASE = "http://localhost:3000/spec";
 
 interface LoginRequest { uid: string; }
 interface LoginResponse { message: string; user: { uid: string; }; }
@@ -219,7 +219,7 @@ export async function getCourseById(course_id: string): Promise<{ course: Course
 }
 
 export async function updateCourseAdmin(payload: CourseAdmin): Promise<{ message: string; course: CourseAdmin }> {
-  const res = await fetch(`${COURSE_API_BASE}/update`, {
+  const res = await fetch(`${COURSE_API_BASE}/update/course`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(withUid(payload)),

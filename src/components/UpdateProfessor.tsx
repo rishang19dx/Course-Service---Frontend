@@ -122,9 +122,9 @@ const UpdateProfessor: React.FC = () => {
             disabled={loading}
           >
             <option value="">Select School</option>
-            <option value="SET">School of Engineering & Technology</option>
-            <option value="SBS">School of Basic Sciences</option>
-            <option value="SSH">School of Social Sciences & Humanities</option>
+            <option value="SET">SCEE</option>
+            <option value="SBS">SCENE</option>
+            <option value="SSH">SMSS</option>
           </select>
         </div>
 
